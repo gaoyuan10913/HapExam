@@ -35,6 +35,7 @@
 			 and it.INVENTORY_ITEM_ID = li.INVENTORY_ITEM_ID
 			 and he.COMPANY_ID = co.COMPANY_ID
 			 and he.HEADER_ID = li.HEADER_ID
+			 GROUP BY he.ORDER_NUMBER
 			<if test="headerId != null">
                 and he.header_id like #{headerId,jdbcType=DECIMAL}
             </if>
@@ -60,9 +61,6 @@
 
     	INSERT INTO hap_om_order_headers
 	    <trim prefix="(" suffix=")" suffixOverrides="," >
-	   	  <if test="headerId != null" >
-	        HEADER_ID,
-	      </if>
 	      <if test="orderNumber != null" >
 	        ORDER_NUMBER,
 	      </if>
@@ -90,7 +88,7 @@
 	        #{orderDate,jdbcType=DATE},
 	      </if>
 	      <if test="orderStatus != null" >
-	        #{orderStatus,jdbcType=VARCHAR},
+	        #{orderStatus,jdbcType=DECIMAL},
 	      </if>
 	      <if test="customerId != null" >
 	        #{customerId,jdbcType=DECIMAL},

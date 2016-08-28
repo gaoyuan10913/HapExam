@@ -41,9 +41,11 @@ public class OrderHeaderController extends BaseController {
 	
     @RequestMapping(value="/sale/orderheader/insert")
     @ResponseBody
-    public ResponseData submitHeaders(@RequestBody List<OrderHeader> headers, BindingResult result, HttpServletRequest request)
+    public ResponseData submitHeader(@RequestBody List<OrderHeader> headers, BindingResult result, HttpServletRequest request)
             throws BaseException {
         IRequest requestContext = createRequestContext(request);
+        OrderHeader orderHeader = headers.get(0);
+        System.out.println(orderHeader);
         return new ResponseData(orderHeaderService.batchUpdate(requestContext, headers));
     }
     

@@ -27,6 +27,7 @@
 		<where>
 			AND sys_code_b.CODE = 'HAP_OM_ORDER_STATUS'
 			AND cl.lang = #{request.locale,jdbcType=VARCHAR}
+			
         </where>
     </select>
     

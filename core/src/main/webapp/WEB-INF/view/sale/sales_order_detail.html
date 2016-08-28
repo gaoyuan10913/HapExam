@@ -23,6 +23,25 @@
 			_isedit = 1;
     	</#if>
 		
+    	/* header保存方法 */
+    	function f_save(){        	
+            Hap.submitForm({
+                form:form,
+                url:'${base.contextPath}/sale/orderheader/insert',
+                success:function(json, opt){
+                	alert("success");
+                    $.ligerDialog.success("<@spring.message "hap.tip.success"/>", '<@spring.message "hap.tip.info"/>', function(){
+                    	//parent.fruitGrid.reload();
+                        //f_cancel();
+                    });
+                },
+                failure:function(){
+                	alert("failure");
+                }
+            });
+        }
+    	
+    	/* =============================== */
 		function getCurrentDate(){
 			var today = new Date();
 			var currentDate = today.getFullYear() + "-" + today.getMonth() + "-" + today.getDate();        	
@@ -44,7 +63,7 @@
                 }
             },{
                 display : '<@spring.message "sale.company.name"/>',
-                name : "companyNameLov",
+                name : "companyId",
                 type : "popup",
                 width: 120,
                 newline : false,
@@ -55,7 +74,7 @@
                 options:${lovService.getLov(base.contextPath, base.locale, "company_name_lov")}
             },{
                 display : '<@spring.message "sale.customer.name"/>',
-                name : "customerNameLov",
+                name : "customerId",
                 type : "popup",
                 width: 120,
                 newline : false,
@@ -65,7 +84,7 @@
                 },
                 options: $.extend(${lovService.getLov(base.contextPath, base.locale, "customer_name_lov")}, {
                 	onLoadData: function() {
-                       this.setParm('companyId', $.ligerui.get('companyNameLov').getValue())
+                       this.setParm('companyId', $.ligerui.get('companyId').getValue())
                    }
                 })
             },{
@@ -119,7 +138,7 @@
         		}
             	</#if>
             	<#if isedit == '1'>
-            	type: "text",
+            	type: 'text',
             	options: {
 	        		readonly: false,
 	        		valueField: 'codeValueId',  //后台要获取到的值
@@ -134,7 +153,7 @@
                 disabled : false,
                 width : 60,
                 click : function() {
-
+                	f_save();
                 }
             },{
                 text    : '<@spring.message "hap.submit"/>',
@@ -181,7 +200,7 @@
                 }
             }]
         });
-        	
+        
       	//================= main detail =======================   
       	window['orderDetailGrid'] = $("#orderDetailGrid").ligerGrid({
             unSetValidateAttr : false,
