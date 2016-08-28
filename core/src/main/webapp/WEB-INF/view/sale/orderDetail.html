@@ -1,0 +1,290 @@
+<#include "../include/head.html">
+<body style="padding: 10px;">
+	<form id="orderDetailForm"></form>
+	
+	<div style="overflow: hidden;margin: 0;padding: 0" class="liger-tab">
+		<div tabid="homeTab" title="<@spring.message "sale.orderline.primary"/>" lselected="true">
+			<div id="homeGrid" style="margin: 0;padding: 0"></div>
+		</div>
+		<div title="<@spring.message "sale.orderline.other"/>" style="margin: 0;padding: 0">
+			<div id="otherGrid" style="margin: 0;padding: 0"></div>
+		</div>
+	</div>
+	<!-- ========================================== -->
+	<script type="text/javascript">
+	
+	<#assign isedit = (RequestParameters.isedit!'0')/>
+	
+
+	
+		/* =============表单============ */
+    	var orderDetailForm = $("#orderDetailForm");
+        var form = orderDetailForm.ligerForm({
+            fields : [ {
+                type : 'text',
+                label : '<@spring.message "sale.order.number"/>',
+                newline:false,
+                name : 'orderNumber',
+                validate: {
+                    required: true
+                }
+            },{
+            	display:'<@spring.message "sale.company.name"/>',
+            	name:'companyId',
+            	type:'popup',
+            	newline:false,
+            	textField:'companyName',
+            	editor :${lovService.getLov(base.contextPath,base.locale,"company_name_lov")},
+                validate: {
+                    required: true
+                }
+
+	        },{
+	        	display:'<@spring.message "sale.customer.name"/>',
+	        	name:'customerId',
+	        	type:'popup',
+	        	newline:false,
+	        	textField:'customerName',
+	        	options: $.extend(${lovService.getLov(base.contextPath,base.locale,"customer_name_lov")},{
+	                onLoadData: function() {
+	                    this.setParm('companyId', $.ligerui.get('companyId').getValue())
+	                }
+	            }),
+                validate: {
+                    required: true
+                }
+	    	},{
+            	display:'<@spring.message "sale.order.date"/>',
+            	name:'orderDate',
+            	type:'date',
+            	newline:true,
+            	textField:'orderDate',
+                validate: {
+                    required: true
+                }
+	        },{
+                display: '<@spring.message "sale.order.money"/>',
+                name: 'orderMoney',
+                newline:false,
+                type: 'text',
+                textField:'orderMoney'
+                
+            },{
+                display: '<@spring.message "sale.order.status"/>',
+                name: 'orderStatus',
+                newline:false,
+                type: 'text',
+                textField:'orderStatus'
+                
+            }],
+            buttons : [ {
+                text : '<@spring.message "hap.save"/>',
+                disabled : false,
+                width : 60,
+                click : formData
+            },{
+                text : '<@spring.message "hap.submit"/>',
+                disabled : false,
+                width : 60,
+                click : function() {
+                    
+                }
+            },{
+                text : '<@spring.message "sale.order.approve"/>',
+                disabled : false,
+                width : 60,
+                click : function() {
+                	//orderDetailForm.reset();
+                }
+            },{
+                text : '<@spring.message "sale.order.reject"/>',
+                disabled : false,
+                width : 60,
+                click : function() {
+                	//orderDetailForm.reset();
+                }
+            },{
+                text : '<@spring.message "sale.order.deleteall"/>',
+                disabled : false,
+                click : function() {
+	
+                }
+            },{
+                text : '<@spring.message "sale.order.print"/>',
+                disabled : false,
+                click : function() {
+	
+                }
+            },{
+                text : '<@spring.message "sale.order.goback"/>',
+                disabled : false,
+                click : function() {
+	
+                }
+            }]
+        });
+        <#if isedit == '1'>
+        	Hap.loadForm({form:form,url:'${base.contextPath}/sale/order/query',para:{orderNumber:${RequestParameters.orderNumber}}});
+  		</#if>
+        
+
+
+        /* ============================== */
+        window['homeGrid'] = $("#homeGrid").ligerGrid({
+            unSetValidateAttr : false,
+            columns : [{
+                display : '<@spring.message "sale.order.linenumber"/>',
+                name : 'lineNumber',
+                align : 'center',
+                width : 80
+            },{
+                display : '<@spring.message "sale.inventory.inventoryitemid"/>',
+                name : 'inventoryItemId',
+                align : 'center',
+                width : 120
+            },{
+                display : '<@spring.message "sale.inventory.itemdescription"/>',
+                name : 'itemDescription',
+                align : 'center',
+                width : 120
+            },{
+                display : '<@spring.message "sale.orderline.quantityuom"/>',
+                name : 'orderQuantityUom',
+                align : 'center',
+                width : 120
+            }, {
+                display : '<@spring.message "sale.orderline.quantity"/>',
+                name : 'orderdQuantity',
+                align : 'center',
+                width : 120,
+                type:'date',
+            }, {
+                display: '<@spring.message "sale.orderline.unitsellingprice"/>',
+                name   : 'unitSellingPrice',
+                align  : 'center',
+                width  : 120
+            }, {
+                display: '<@spring.message "sale.orderline.money"/>',
+                name   : 'orderlineMoney',
+                align  : 'center',
+                width  : 120
+            }, {
+                display: '<@spring.message "hap.comment"/>',
+                name   : 'description',
+                align  : 'center',
+                width  : 120
+            }],
+            url : '${base.contextPath}/demo/orderHeaders/query',
+            toolbar : {
+                items : [ {
+                    text : '<@spring.message "hap.new"/>',
+                    disable : false,
+                    click : function() {
+                    	homeGrid.addRow({})
+                    },
+                    icon : 'add'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.delete"/>',
+                    click : function() {
+                        Hap.gridDelete({
+                            grid : fruitGrid,
+                            url : ''
+                        })
+                    	fruitGrid.deleteSelectedRow();
+                    },
+                    icon : 'delete'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.save"/>',
+                    click : function() {
+                        Hap.gridSave({
+                            grid : fruitGrid,
+                            url : ''
+                        })
+                    },
+                    icon : 'save'
+                } ]
+            },
+            enabledEdit : true,
+            width : '99%',
+            height : '50%',
+            checkbox : true
+        });
+        	
+        /* ============================================ */
+        window['otherGrid'] = $("#otherGrid").ligerGrid({
+            unSetValidateAttr : false,
+            columns : [{
+                display : '<@spring.message "sale.orderline.linenumber"/>',
+                name : 'lineNumber',
+                align : 'center',
+                width : 80
+            },{
+                display : '<@spring.message "sale.orderline.addition1"/>',
+                name : 'addition1',
+                align : 'center',
+                width : 120
+            },{
+                display : '<@spring.message "sale.orderline.addition2"/>',
+                name : 'addition2',
+                align : 'center',
+                width : 120
+            },{
+                display : '<@spring.message "sale.orderline.addition3"/>',
+                name : 'addition3',
+                align : 'center',
+                width : 120
+            }, {
+                display : '<@spring.message "sale.orderline.addition4"/>',
+                name : 'addition4',
+                align : 'center',
+                width : 120
+            }, {
+                display: '<@spring.message "sale.orderline.addition5"/>',
+                name   : 'addition5',
+                align  : 'center',
+                width  : 120
+            }],
+            url : '${base.contextPath}/demo/orderHeaders/query',
+            toolbar : {
+                items : [ {
+                    text : '<@spring.message "hap.new"/>',
+                    disable : false,
+                    click : function() {
+                    	otherGrid.addRow({})
+                    },
+                    icon : 'add'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.delete"/>',
+                    click : function() {
+                        Hap.gridDelete({
+                            grid : fruitGrid,
+                            url : ''
+                        })
+                    	fruitGrid.deleteSelectedRow();
+                    },
+                    icon : 'delete'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.save"/>',
+                    click : function() {
+                        
+                    },
+                    icon : 'save'
+                } ]
+            },
+            enabledEdit : true,
+            width : '99%',
+            height : '334px',
+            checkbox : true
+        });
+       
+    </script>
+</body>
+</html>

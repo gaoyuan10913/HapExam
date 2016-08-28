@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ #{copyright}#
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hbi.core.order.mapper.OrderStatusMapper">
+    <resultMap id="BaseResult" type="hbi.core.order.dto.OrderStatus" extends="com.hand.hap.mapper.StdMapper.STD">
+    	<result column="CODE_VALUE_ID" property="codeValueId" jdbcType="DECIMAL"/>
+        <result column="CODE_ID" property="codeId" jdbcType="DECIMAL"/>
+        <result column="MEANING" property="meaning" jdbcType="VARCHAR"/>
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+    </resultMap>
+	
+	<select id="selectOrderStatus" parameterType="hbi.core.order.dto.OrderStatus"  resultMap="BaseResult">
+		SELECT
+			c.CODE_VALUE_ID,
+			c.CODE_ID,
+			cl.MEANING,
+			cl.DESCRIPTION
+		FROM
+			sys_code_value_b c
+		 LEFT JOIN sys_code_value_tl cl
+			ON c.CODE_VALUE_ID = cl.CODE_VALUE_ID
+		 LEFT JOIN sys_code_b
+			ON c.CODE_ID = sys_code_b.CODE_ID
+		<where>
+			AND sys_code_b.CODE = 'HAP_OM_ORDER_STATUS'
+			AND cl.lang = #{request.locale,jdbcType=VARCHAR}
+        </where>
+    </select>
+    
+
+</mapper>

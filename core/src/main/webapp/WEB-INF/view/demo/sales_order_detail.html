@@ -1,0 +1,294 @@
+<#--
+ * description: sales_order_detail.html
+ * version: 1.0 
+ * author:zhiwei.zhang@hand-china.com
+ * #{copyright}#
+ * 
+-->
+<#include "../include/head.html">
+<body style="padding: 10px;">
+	<form id="orderDetailForm"></form>
+	<div style="overflow: hidden; margin: 0; padding: 0;" class="liger-tab">
+		<div tabid="home" title="主要" lselected="true" style="margin: 0; padding: 0">
+			<div id="orderDetailGrid" style="margin: 0; padding: 0"></div>
+		</div>
+		<div title="其他" style="margin: 0; padding: 0;">
+			<div id="otherDetailGrid" style="margin: 0; padding: 0;"></div>
+		</div>
+	</div>
+    <script type="text/javascript">
+    $(function() {
+    	debugger;
+        window['orderDetailForm'] = $("#orderDetailForm").ligerForm({
+            fields : [{
+                display : "订单编号",
+                name : "companyNameLov",
+                type : 'text',
+                width: 120,
+                newline : false,
+                textField:''
+            },{
+                display : "公司名称",
+                name : "companyNameLov",
+                type : "popup",
+                width: 120,
+                newline : false,
+                textField:'companyName',
+                options:${lovService.getLov(base.contextPath, base.locale, "company_name_lov")}
+            },{
+                display : "客户名称",
+                name : "customerNameLov",
+                type : "popup",
+                width: 120,
+                newline : false,
+                textField:'customerName',
+                options: $.extend(${lovService.getLov(base.contextPath, base.locale, "customer_name_lov")}, {
+                	onLoadData: function() {
+                       this.setParm('companyId', $.ligerui.get('companyNameLov').getValue())
+                   }
+                })
+            },{
+                label : '订单日期',
+                name : '11',
+                newline : true,
+                width: 120
+            },{
+                label : '订单总金额',
+                type : 'text',
+                name : 'orderNumber',
+                newline : false,
+                width: 120
+            },{
+            	display: '订单状态',
+            	name: "orderStatus",
+            	width: 120,
+            	newline: false,
+            	type: "select",
+            	textField: "description",
+            	options: {
+            		readonly: false,
+            		valueField: 'codeValueId',  //后台要获取到的值
+            		textField: 'description',   //界面显示的值
+            		url: '${base.contextPath}/demo/codeValue/query',
+            		triggerToLoad: true
+            	}
+            }],
+            buttons : [ {
+                text : '<@spring.message "hap.save"/>',
+                disabled : false,
+                width : 60,
+                click : function() {
+                    //-------------------
+                }
+            },{
+                text    : '<@spring.message "hap.submit"/>',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                	//-----------------
+                }
+            },{
+                text    : '审批',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                	//-----------------
+                }
+            },{
+                text    : '拒绝',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                	//-----------------
+                }
+            },{
+                text    : '整单删除',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                	//-----------------
+                }
+            },{
+                text    : '单据打印',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                	//-----------------
+                }
+            },{
+                text    : '返回',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                	//-----------------
+                }
+            }]
+        });
+
+        //================= main detail =======================        	
+               
+        window['orderDetailGrid'] = $("#orderDetailGrid").ligerGrid({
+            unSetValidateAttr : false,
+            columns : [{
+                display : '行号',
+                name : 'orderNumber',
+                align : 'center',
+                width : 80
+            },{
+                display : '物料编码',
+                name : 'orderNumber',
+                align : 'center',
+                width : 120
+            },{
+                display : '物料描述',
+                name : 'companyName',
+                align : 'center',
+                width : 120
+            },{
+                display : '产品单位',
+                name : 'customerName',
+                align : 'center',
+                width : 120
+            }, {
+                display : '数量',
+                name : 'orderDate',
+                align : 'center',
+                width : 120,
+                type:'date',
+	            format : "yyyy-MM-dd"
+            }, {
+                display: '销售单价',
+                name   : 'orderStatus',
+                align  : 'center',
+                width  : 120
+            }, {
+                display: '金额',
+                name   : 'orderMoney',
+                align  : 'center',
+                width  : 120
+            }, {
+                display: '备注',
+                name   : 'orderMoney',
+                align  : 'center',
+                width  : 120
+            }],
+            url : '${base.contextPath}/demo/orderHeaders/query',
+            toolbar : {
+                items : [ {
+                    text : '<@spring.message "hap.new"/>',
+                    disable : false,
+                    click : function() {
+                        orderDetailGrid.addRow({})
+                    },
+                    icon : 'add'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.delete"/>',
+                    click : function() {
+                        Hap.gridDelete({
+                            grid : fruitGrid,
+                            url : ''
+                        })
+                    	fruitGrid.deleteSelectedRow();
+                    },
+                    icon : 'delete'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.save"/>',
+                    click : function() {
+                        Hap.gridSave({
+                            grid : fruitGrid,
+                            url : ''
+                        })
+                    },
+                    icon : 'save'
+                } ]
+            },
+            enabledEdit : true,
+            width : '99%',
+            height : '98%',
+            checkbox : true
+        });
+        //============== other detail =============================
+        	
+        window['otherDetailGrid'] = $("#otherDetailGrid").ligerGrid({
+            unSetValidateAttr : false,
+            columns : [{
+                display : '行号',
+                name : 'orderNumber',
+                align : 'center',
+                width : 80
+            },{
+                display : '附加信息1',
+                name : 'orderNumber',
+                align : 'center',
+                width : 120
+            },{
+                display : '附加信息2',
+                name : 'companyName',
+                align : 'center',
+                width : 120
+            },{
+                display : '附加信息3',
+                name : 'customerName',
+                align : 'center',
+                width : 120
+            }, {
+                display : '附加信息4',
+                name : 'orderDate',
+                align : 'center',
+                width : 120,
+                type:'date',
+	            format : "yyyy-MM-dd"
+            }, {
+                display: '附加信息5',
+                name   : 'orderStatus',
+                align  : 'center',
+                width  : 120
+            }],
+            url : '${base.contextPath}/demo/orderHeaders/query',
+            toolbar : {
+                items : [ {
+                    text : '<@spring.message "hap.new"/>',
+                    disable : false,
+                    click : function() {
+                        orderDetailGrid.addRow({})
+                    },
+                    icon : 'add'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.delete"/>',
+                    click : function() {
+                        Hap.gridDelete({
+                            grid : fruitGrid,
+                            url : ''
+                        })
+                    	fruitGrid.deleteSelectedRow();
+                    },
+                    icon : 'delete'
+                }, {
+                    line : true
+                }, {
+                    text : '<@spring.message "hap.save"/>',
+                    click : function() {
+                        Hap.gridSave({
+                            grid : fruitGrid,
+                            url : ''
+                        })
+                    },
+                    icon : 'save'
+                } ]
+            },
+            enabledEdit : true,
+            width : '99%',
+            height : '334px',
+            checkbox : true
+        });
+    });
+    
+    </script>
+</body>
+</html>

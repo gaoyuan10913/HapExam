@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hbi.core.order.mapper.CompanyMapper">
+
+	<resultMap id="BaseResultMap" type="hbi.core.order.dto.Company" extends="com.hand.hap.mapper.StdMapper.STD">
+        <result column="COMPANY_NUMBER" property="companyNumber" jdbcType="VARCHAR"/>
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR"/>
+        <result column="COMPANY_ID" property="companyId" jdbcType="DECIMAL"/>
+    </resultMap>
+    
+	<select id="selectByCompany" parameterType="hbi.core.order.dto.Company" resultMap="BaseResultMap">
+		select company_number,
+		       company_name,
+		       company_id
+		  from hap_org_companys
+		<where>
+            <if test="companyNumber != null">
+                and company_number = #{companyNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="companyName != null">
+                and company_name like #{companyName,jdbcType=VARCHAR}
+            </if>
+        	<if test="companyId != null">
+                and company_id = #{companyId,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </select>
+
+</mapper>

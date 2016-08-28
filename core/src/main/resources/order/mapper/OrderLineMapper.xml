@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ #{copyright}#
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hbi.core.order.mapper.OrderLineMapper">
+    <resultMap id="BaseOrderLineMap" type="hbi.core.order.dto.OrderLine" extends="com.hand.hap.mapper.StdMapper.STD">
+    	<result column="LINE_NUMBER" property="lineNumber" jdbcType="DECIMAL"/>
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR"/>
+        <result column="ITEM_DESCRIPTION" property="itemDescription" jdbcType="VARCHAR"/>
+        <result column="ORDER_QUANTITY_UOM" property="orderQuantityUom" jdbcType="VARCHAR"/>
+        <result column="ORDERD_QUANTITY" property="orderdQuantity" jdbcType="DECIMAL"/>
+        <result column="UNIT_SELLING_PRICE" property="unitSellingPrice" jdbcType="DECIMAL"/>
+        <result column="ORDER_SUMMARY" property="orderSummary" jdbcType="DECIMAL"/>
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+        <result column="ADDITION1" property="addition1" jdbcType="VARCHAR"/>
+        <result column="ADDITION2" property="addition2" jdbcType="VARCHAR"/>
+        <result column="ADDITION3" property="addition3" jdbcType="VARCHAR"/>
+        <result column="ADDITION4" property="addition4" jdbcType="VARCHAR"/>
+        <result column="ADDITION5" property="addition5" jdbcType="VARCHAR"/>
+    </resultMap>
+	
+	<select id="selectOrderLine" parameterType="hbi.core.order.dto.OrderHeader"  resultMap="BaseOrderLineMap">
+		SELECT 	DISTINCT
+				ol.HEADER_ID,
+				ol.LINE_NUMBER,
+		        inv.ITEM_CODE,
+		        inv.ITEM_DESCRIPTION,
+		        ol.ORDER_QUANTITY_UOM,
+		        ol.ORDERD_QUANTITY,
+		        ol.UNIT_SELLING_PRICE,
+		       (ol.UNIT_SELLING_PRICE*ol.ORDERD_QUANTITY)AS ORDER_SUMMARY,
+		       	ol.DESCRIPTION,
+		        ol.ADDITION1,
+		        ol.ADDITION2,
+		        ol.ADDITION3,
+		        ol.ADDITION4,
+		        ol.ADDITION5
+   
+		  FROM 
+                 hap_om_order_lines ol,
+                 hap_inv_inventory_items inv,
+                 hap_om_order_headers oh
+		<where>
+               and  ol.INVENTORY_ITEM_ID=inv.INVENTORY_ITEM_ID
+               and  ol.HEADER_ID=oh.HEADER_ID
+         	<if test="headerId != null">
+               and oh.HEADER_ID = #{headerId,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </select>
+    
+
+</mapper>

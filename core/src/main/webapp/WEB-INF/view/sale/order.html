@@ -1,0 +1,160 @@
+<#include "../include/head.html">
+<body style="padding: 10px;">
+	<form id="orderForm"></form>
+	<div id="orderGrid" style="margin: 0; padding: 0"></div>
+	<script type="text/javascript">
+    
+        
+    $(function() {
+    	debugger;
+        window['orderForm'] = $("#orderForm").ligerForm({
+            fields : [ {
+            	display:'<@spring.message "sale.company.name"/>',
+            	name:'companyId',
+            	type:'popup',
+            	newline:false,
+            	textField:'companyName',
+            	editor:${lovService.getLov(base.contextPath,base.locale,"company_name_lov")} 
+
+	        },{
+	        	display:'<@spring.message "sale.customer.name"/>',
+	        	name:'customerId',
+	        	type:'popup',
+	        	newline:false,
+	        	textField:'customerName',
+	        	options: $.extend(${lovService.getLov(base.contextPath,base.locale,"customer_name_lov")},{
+	                onLoadData: function() {
+	                    this.setParm('companyId', $.ligerui.get('companyId').getValue())
+	                }
+	            })
+	    	},{
+                type : 'text',
+                label : '<@spring.message "sale.order.number"/>',
+                newline:false,
+                name : 'orderNumber',
+                width: 150
+            },{
+	        	display:'<@spring.message "sale.inventory.itemdescription"/>',
+	        	name:'inventoryItemId',
+	        	type:'popup',
+	        	newline:false,
+	        	textField:'itemDescription',
+	         	options:${lovService.getLov(base.contextPath,base.locale,"inventory_name_lov")} 
+	    	},{
+                display: "<@spring.message "sale.order.status"/>",
+                name: 'orderStatus',
+                newline:false,
+                type: 'select',
+                options: {
+                    readonly: false,
+                    valueField: 'codeValueId',
+                    textField: 'meaning',
+                    url: '${base.contextPath}/sale/orderstatus/query',
+                    triggerToLoad: true
+                }
+            }],
+            buttons : [ {
+                text : '<@spring.message "hap.query"/>',
+                disabled : false,
+                width : 60,
+                click : function() {
+                    Hap.gridQuery({
+                        form : orderForm,
+                        grid : orderGrid
+                    })
+                }
+            },{
+                text : '<@spring.message "hap.reset"/>',
+                disabled : false,
+                width : 60,
+                click : function() {
+                	orderForm.reset();
+                }
+            },{
+                text : '<@spring.message "sale.export.excel"/>',
+                disabled : false,
+                width : 60,
+                click : function() {
+	
+                }
+            }]
+        });
+
+        
+        /* 点击进入编辑的方法 */
+        window.editOrder = function (headerId) {
+        	//alert(headerId);
+            window.popWin = $.ligerDialog.open({
+                load  : false,
+                width : 1050,
+                height: 1050,
+                url   : 'sales_order_detail.html?isedit=1&headerId=' + headerId
+            });
+        };
+        
+        window['orderGrid'] = $("#orderGrid").ligerGrid({
+            unSetValidateAttr : false,
+            columns : [{
+                display : '<@spring.message "sale.order.number"/>',
+                name : 'orderNumber',
+                align : 'center',
+                width : 120,
+                render : function(rowdata) {
+               		//alert(rowdata.headerId);
+					return '<a href="#" onclick="editOrder(' + rowdata.headerId + ')">' + rowdata.orderNumber + '</a>'
+                }
+            },{
+                display : '<@spring.message "sale.company.name"/>',
+                name : 'companyName',
+                align : 'center',
+                width : 200
+            }, {
+                display : '<@spring.message "sale.customer.name"/>',
+                name : 'customerName',
+                align : 'center',
+                width : 200
+            }, {
+                display : '<@spring.message "sale.order.date"/>',
+                name : 'orderDate',
+                align : 'center',
+                type : 'date',
+                width : 150
+            },{
+                display: '<@spring.message "sale.order.status"/>',
+                name   : 'orderStatus',
+                align  : 'center',
+                width  : 120
+            },{
+                display : '<@spring.message "sale.order.money"/>',
+                name : 'orderMoney',
+                align : 'center',
+                width : 120
+            }],
+            url : '${base.contextPath}/sale/order/query',
+            toolbar : {
+                items : [{
+                    text : '<@spring.message "hap.new"/>',
+                    disable : false,
+                    click : function() {
+                    	window.popWin = $.ligerDialog.open({
+                            width : 1050, 
+                            height : 1050,
+                            url : 'sales_order_detail.html'
+                        });
+                    },
+                    icon : 'add'
+                }]
+            },
+            enabledEdit : true,
+            width : '99%',
+            height : '98%',
+            //checkbox : true
+        });
+        
+
+        
+    });
+    
+    </script>
+</body>
+</html>

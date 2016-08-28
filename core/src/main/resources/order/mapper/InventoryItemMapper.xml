@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hbi.core.order.mapper.InventoryItemMapper">
+
+	<resultMap id="BaseResultMap" type="hbi.core.order.dto.InventoryItem" extends="com.hand.hap.mapper.StdMapper.STD">
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR"/>
+        <result column="ITEM_DESCRIPTION" property="itemDescription" jdbcType="VARCHAR"/>
+        <result column="INVENTORY_ITEM_ID" property="inventoryItemId" jdbcType="DECIMAL"/>
+    </resultMap>
+    
+	<select id="selectByInventoryItem" parameterType="hbi.core.order.dto.InventoryItem" resultMap="BaseResultMap">
+		select item_code,
+			   item_description,
+			   inventory_item_id
+		  from hap_inv_inventory_items
+		<where>
+        	<if test="itemCode != null">
+                and item_code = #{itemCode,jdbcType=VARCHAR}
+            </if>
+            <if test="itemDescription != null">
+                and item_description like #{itemDescription,jdbcType=VARCHAR}
+            </if>
+            <if test="inventoryItemId != null">
+                and inventory_item_id like #{inventoryItemId,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </select>
+
+</mapper>

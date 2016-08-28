@@ -1,0 +1,265 @@
+<#--
+ * description: TabDEMO
+ * version: 1.0
+ * #copyright#
+ *
+-->
+<#include "../include/head.html">
+<body style="padding: 10px;">
+<div id="departmentGrid" name="departmentGrid"></div>
+<div id="job_cron_tabs" class="liger-tab">
+    <div tabid="employeeTab1" title="部门明细1" lselected="true">
+        <div id="employeeGrid1" name="employeeGrid1"></div>
+    </div>
+    <div tabid="employeeTab2" title="部门明细2" showclose="true">
+        <div id="employeeGrid2" name="employeeGrid2"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+        var tab = $('#job_cron_tabs').ligerTab({
+        	height:'90%',
+            changeHeightOnResize:true
+        });
+        
+        var departmentGrid = window['departmentGrid'] = $("#departmentGrid").ligerGrid({
+            unSetValidateAttr: false,
+            columns          : [{
+                display: '部门编号',
+                name   : 'departmentId',
+                align  : 'left',
+                width  : 120,
+                editor : {
+                    type: 'text'
+                },
+                validate:{
+                    required:true
+                }
+            },
+            {
+                display: '部门名称',
+                name   : 'departmentName',
+                align  : 'left',
+                width  : 120,
+                editor : {
+                    type: 'text'
+                },
+                validate:{
+                    required:true
+                }
+            },
+            {
+                display: '部门描述',
+                name   : 'departmentDescription',
+                align  : 'left',
+                width  : 300,
+                editor : {
+                    type: 'text'
+                }
+            }],
+            url              : '${base.contextPath}/demo/department/query',
+            enabledEdit      : false,
+            width            : '99%',
+            height           : '200',
+            checkbox         : false,
+            onSelectRow: function (data, rowindex, rowobj)
+            {
+                $.ligerDialog.alert('选择的是:' + data.departmentId);
+                //$.ligerDialog.alert('选择的是:' + rowobj.departmentName);
+                //传数据给员工grid
+                queryEmployee(data.departmentId);
+            }
+        });
+        
+        
+        
+	        function queryEmployee(departmentId){
+	        	//Employee Grid 1
+		        	var employeeGrid1 = window['employeeGrid1'] = $("#employeeGrid1").ligerGrid({
+		            unSetValidateAttr: false,
+		            columns          : [{
+		                display: '员工工号',
+		                name   : 'employeeId',
+		                align  : 'left',
+		                width  : 120
+		            },
+		            {
+		                display: '员工姓名',
+		                name   : 'employeeName',
+		                align  : 'left',
+		                width  : 120,
+		                editor : {
+		                    type: 'text'
+		                },
+		                validate:{
+		                    required:true
+		                }
+		            },
+                    {
+                        display: '员工性别',
+                        name   : 'employeeSex',
+                        align  : 'center',
+                        width  : 100,
+                        editor : {
+                            type : 'select',
+                            valueField : 'ID',
+                            textField : 'Name',
+                            data : [ {
+                                ID : '男',
+                                Name : '男'
+                            }, {
+                                ID : '女',
+                                Name : '女'
+                            } ]
+                        }
+                    },
+                    {
+                        display: '员工年龄',
+                        name   : 'employeeAge',
+                        align  : 'left',
+                        width  : 120,
+                        editor : {
+                            type: 'int'
+                        }
+                    },
+                    {
+                        display: '员工地址',
+                        name   : 'employeeAddress',
+                        align  : 'left',
+                        width  : 120,
+                        editor : {
+                            type: 'text'
+                        }
+                    }],
+		            url              : '${base.contextPath}/demo/employee/query?departmentId='+departmentId,
+		            toolbar          : {
+		                items: [{
+		                    text   : '<@spring.message "hap.new"/>',
+		                    disable: false,
+		                    click  : function () {
+		                    	employeeGrid1.addRow({})
+		                    },
+		                    icon   : 'add'
+		                }, {
+		                    line: true
+		                }, {
+		                    text : '<@spring.message "hap.delete"/>',
+		                    click: function () {
+		                        Hap.gridDelete({
+		                            grid: employeeGrid1,
+		                            url : ''
+		                        })
+		
+		                    },
+		                    icon : 'delete'
+		                }, {
+		                    line: true
+		                }, {
+		                    text : '<@spring.message "hap.save"/>',
+		                    click: function () {
+		                        Hap.gridSave({
+		                            grid: employeeGrid1,
+		                            url : '${base.contextPath}/demo/employee/submit?departmentId='+departmentId
+		                        })
+		                        queryEmployee(departmentId);
+		                        //employeeGrid1.reload();
+		                    },
+		                    icon : 'save'
+		                }]
+		            },
+		            enabledEdit      : true,
+		            width            : '99%',
+		            height           : '98%',
+		            checkbox         : true
+		        });
+	        	
+	        	//Employee Grid 2
+		        	var employeeGrid2 = window['employeeGrid2'] = $("#employeeGrid2").ligerGrid({
+	                    unSetValidateAttr: false,
+	                    columns          : [{
+	                        display: '员工工号',
+	                        name   : 'employeeId',
+	                        align  : 'left',
+	                        width  : 120
+	                    },
+	                    {
+	                        display: '员工姓名',
+	                        name   : 'employeeName',
+	                        align  : 'left',
+	                        width  : 120,
+	                        editor : {
+	                            type: 'text'
+	                        },
+	                        validate:{
+	                            required:true
+	                        }
+	                    },
+	                    {
+	                        display: '员工邮箱',
+	                        name   : 'employeeEmail',
+	                        align  : 'left',
+	                        width  : 100,
+	                        editor : {
+	                            type: 'text'
+	                        }
+	                    },
+	                    {
+	                        display: '联系方式',
+	                        name   : 'employeeTele',
+	                        align  : 'left',
+	                        width  : 120,
+	                        editor : {
+	                            type: 'int'
+	                        }
+	                    }],
+	                    url              : '${base.contextPath}/demo/employee/query?departmentId='+departmentId,
+	                    toolbar          : {
+	                        items: [{
+	                            text   : '<@spring.message "hap.new"/>',
+	                            disable: false,
+	                            click  : function () {
+	                            	employeeGrid2.addRow({})
+	                            },
+	                            icon   : 'add'
+	                        }, {
+	                            line: true
+	                        }, {
+	                            text : '<@spring.message "hap.delete"/>',
+	                            click: function () {
+	                                Hap.gridDelete({
+	                                    grid: employeeGrid2,
+	                                    url : ''
+	                                })
+	        
+	                            },
+	                            icon : 'delete'
+	                        }, {
+	                            line: true
+	                        }, {
+	                            text : '<@spring.message "hap.save"/>',
+	                            click: function () {
+	                                Hap.gridSave({
+	                                    grid: employeeGrid2, 
+	                                    url : '${base.contextPath}/demo/employee/submit?departmentId='+departmentId
+	                                })
+	                                //重新加载grid
+	                                queryEmployee(departmentId);
+	                                //employeeGrid2.reload();
+	                            },
+	                            icon : 'save'
+	                        }]
+	                    },
+	                    enabledEdit      : true,
+	                    width            : '99%',
+	                    height           : '257',
+	                    checkbox         : true
+	                });
+	        }
+	        
+     $(function () {
+    	 queryEmployee(0);
+     });
+	
+</script>
+</body>
+</html>
